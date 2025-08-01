@@ -1,3 +1,4 @@
+mod hud;
 mod main_scene;
 mod mob;
 mod player;

@@ -1,10 +1,8 @@
-use godot::{
-    classes::{Marker2D, PathFollow2D, Timer},
-    global::{randf, randf_range},
-    prelude::*,
-};
+use godot::classes::{Marker2D, PathFollow2D, Timer};
+use godot::global::{randf, randf_range};
+use godot::prelude::*;
 
-use crate::{mob::Mob, player::Player};
+use crate::{hud::HUD, mob::Mob, player::Player};
 
 #[derive(GodotClass)]
 #[class(base = Node, init)]
@@ -30,6 +28,9 @@ struct Main {
     #[init(node = "MobPath/MobSpawnLocation")]
     mob_spawn_location: OnReady<Gd<PathFollow2D>>,
 
+    #[init(node = "HUD")]
+    hud: OnReady<Gd<HUD>>,
+
     score: u32,
 
     base: Base<Node>,
@@ -41,6 +42,7 @@ impl Main {
     fn game_over(&mut self) {
         self.mob_timer.stop();
         self.score_timer.stop();
+        self.hud.bind_mut().show_game_over();
     }
 
     #[func]
@@ -50,6 +52,10 @@ impl Main {
             .start(self.start_position.get_position());
 
         self.start_timer.start();
+
+        let mut hud = self.hud.bind_mut();
+        hud.update_score(self.score);
+        hud.show_message("Get Ready!");
     }
 
     #[func]
@@ -75,6 +81,7 @@ impl Main {
     #[func]
     fn on_score_timer_timeout(&mut self) {
         self.score += 1;
+        self.hud.bind_mut().update_score(self.score);
     }
 
     #[func]
@@ -106,5 +113,10 @@ impl INode for Main {
             .signals()
             .timeout()
             .connect_other(self, Self::on_score_timer_timeout);
+
+        self.hud
+            .signals()
+            .start_game()
+            .connect_other(self, Self::new_game);
     }
 }
