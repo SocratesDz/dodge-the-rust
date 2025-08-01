@@ -1,8 +1,5 @@
 use godot::{
-    classes::{
-        Marker2D, PathFollow2D, Timer,
-        class_macros::sys::godot_virtual_consts::ScriptLanguageExtension::profiling_start,
-    },
+    classes::{Marker2D, PathFollow2D, Timer},
     global::{randf, randf_range},
     prelude::*,
 };
