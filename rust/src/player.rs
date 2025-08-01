@@ -3,7 +3,7 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Area2D)]
-struct Player {
+pub struct Player {
     #[export]
     speed: f32,
     screen_size: Vector2,
@@ -13,7 +13,7 @@ struct Player {
 #[godot_api]
 impl Player {
     #[signal]
-    fn hit();
+    pub fn hit();
 
     #[func]
     fn on_player_body_entered(&mut self, _body: Gd<Node2D>) {
@@ -25,7 +25,7 @@ impl Player {
     }
 
     #[func]
-    fn start(&mut self, position: Vector2) {
+    pub fn start(&mut self, position: Vector2) {
         self.base_mut().set_position(position);
         self.base_mut().show();
         let mut collision_shape = self

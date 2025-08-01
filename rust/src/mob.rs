@@ -4,7 +4,7 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=RigidBody2D, init)]
-struct Mob {
+pub struct Mob {
     base: Base<RigidBody2D>,
 }
 
