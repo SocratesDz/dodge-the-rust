@@ -32,8 +32,8 @@ impl HUD {
     pub fn show_game_over(&mut self) {
         self.show_message("Game Over");
         // Ugly
-        let mut message_timer = self.base().get_node_as::<Timer>("MessageTimer");
-        message_timer.connect("timeout", &self.base().callable("show_message_text"));
+        let mut timer = self.base().get_tree().unwrap().create_timer(2.0).unwrap();
+        timer.connect("timeout", &self.base().callable("show_message_text"));
     }
 
     #[func]

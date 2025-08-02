@@ -47,6 +47,8 @@ impl Main {
 
     #[func]
     fn new_game(&mut self) {
+        self.score = 0;
+
         self.player
             .bind_mut()
             .start(self.start_position.get_position());
@@ -56,6 +58,10 @@ impl Main {
         let mut hud = self.hud.bind_mut();
         hud.update_score(self.score);
         hud.show_message("Get Ready!");
+        hud.base_mut()
+            .get_tree()
+            .unwrap()
+            .call_group("mobs", "queue_free", &[]);
     }
 
     #[func]
@@ -94,29 +100,31 @@ impl Main {
 #[godot_api]
 impl INode for Main {
     fn ready(&mut self) {
+        let main = self.to_gd();
+
         self.player
             .signals()
             .hit()
-            .connect_other(self, Self::game_over);
+            .connect_other(&main, Self::game_over);
 
         self.mob_timer
             .signals()
             .timeout()
-            .connect_other(self, Self::on_mob_timer_timeout);
+            .connect_other(&main, Self::on_mob_timer_timeout);
 
         self.start_timer
             .signals()
             .timeout()
-            .connect_other(self, Self::on_start_timer_timeout);
+            .connect_other(&main, Self::on_start_timer_timeout);
 
         self.score_timer
             .signals()
             .timeout()
-            .connect_other(self, Self::on_score_timer_timeout);
+            .connect_other(&main, Self::on_score_timer_timeout);
 
         self.hud
             .signals()
             .start_game()
-            .connect_other(self, Self::new_game);
+            .connect_other(&main, Self::new_game);
     }
 }
