@@ -1,4 +1,4 @@
-use godot::classes::{Marker2D, PathFollow2D, Timer};
+use godot::classes::{AudioStreamPlayer, Marker2D, PathFollow2D, Timer};
 use godot::global::{randf, randf_range};
 use godot::prelude::*;
 
@@ -31,6 +31,12 @@ struct Main {
     #[init(node = "HUD")]
     hud: OnReady<Gd<HUD>>,
 
+    #[init(node = "Music")]
+    music: OnReady<Gd<AudioStreamPlayer>>,
+
+    #[init(node = "DeathSound")]
+    death_sound: OnReady<Gd<AudioStreamPlayer>>,
+
     score: u32,
 
     base: Base<Node>,
@@ -43,6 +49,8 @@ impl Main {
         self.mob_timer.stop();
         self.score_timer.stop();
         self.hud.bind_mut().show_game_over();
+        self.music.stop();
+        self.death_sound.play();
     }
 
     #[func]
@@ -62,6 +70,8 @@ impl Main {
             .get_tree()
             .unwrap()
             .call_group("mobs", "queue_free", &[]);
+
+        self.music.play();
     }
 
     #[func]
